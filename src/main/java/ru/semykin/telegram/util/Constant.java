@@ -8,4 +8,6 @@ public interface Constant {
 
     String HELP = "HELP";
 
+    String UPDATE_NO_HAVE_TEXT = "По вашему запросу '%s' акция не найдена.";
+
 }

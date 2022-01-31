@@ -6,10 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.mapping.Value;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 import static ru.semykin.telegram.util.Constant.PERCENT;
@@ -19,6 +16,7 @@ import static ru.semykin.telegram.util.Constant.PERCENT;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "events")
 public class MessageModel {
 
     @Id

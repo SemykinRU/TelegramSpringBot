@@ -3,6 +3,12 @@ package ru.semykin.telegram.repository;
 import org.springframework.data.repository.Repository;
 import ru.semykin.telegram.db.MessageModel;
 
-public class MessageRepository implements Repository<MessageModel, Long> {
+import java.util.List;
+
+public interface MessageRepository extends Repository<MessageModel, Long> {
+
+    List<MessageModel> findAll();
+
+    List<MessageModel> findAllByEventsNameContains(String eventsName);
 
 }
