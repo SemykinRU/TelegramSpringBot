@@ -1,10 +1,9 @@
-package ru.semykin.telegram.db;
+package ru.semykin.telegram.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.mapping.Value;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

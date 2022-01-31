@@ -1,7 +1,7 @@
 package ru.semykin.telegram.service.command;
 
 import org.springframework.stereotype.Service;
-import ru.semykin.telegram.db.MessageModel;
+import ru.semykin.telegram.entity.MessageModel;
 import ru.semykin.telegram.repository.MessageRepository;
 
 import java.util.List;

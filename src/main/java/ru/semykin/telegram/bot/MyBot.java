@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
+import ru.semykin.telegram.service.KeyBoard;
 import ru.semykin.telegram.service.OutputMessage;
 
 @Getter
@@ -21,9 +21,12 @@ public class MyBot extends SpringWebhookBot {
 
     private OutputMessage outputMessage;
 
-    public MyBot(SetWebhook setWebhook, OutputMessage outputMessage) {
+    private final KeyBoard keyBoard;
+
+    public MyBot(SetWebhook setWebhook, OutputMessage outputMessage, KeyBoard keyBoard) {
         super(setWebhook);
         this.outputMessage = outputMessage;
+        this.keyBoard = keyBoard;
     }
 
     @Override
@@ -33,6 +36,8 @@ public class MyBot extends SpringWebhookBot {
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(String.valueOf(message.getChatId()));
             String answer = outputMessage.giveMessage(update);
+            sendMessage.enableMarkdown(true);
+            sendMessage.setReplyMarkup(keyBoard.getSettingsKeyboard());
             sendMessage.setText(answer);
             return sendMessage;
         }
