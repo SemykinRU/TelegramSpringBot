@@ -10,4 +10,6 @@ public interface Constant {
 
     String UPDATE_NO_HAVE_TEXT = "По вашему запросу '%s' акция не найдена.";
 
+    String CACHE_KEY = "allEvents";
+
 }
