@@ -7,7 +7,7 @@ public enum CommandEnum {
     HELP("Что делать?"),
     ALLEVENTS("Все акции"),
     PROMOCODE("Промокод"),
-    START("Старт"),
+    START("/start"),
     CONDITIONS("Условия"),
     ALLEVENTSBYNAME("Поиск");
 

@@ -9,7 +9,7 @@ import ru.semykin.telegram.entity.MessageModel;
 public interface MessageRepository extends JpaRepository<MessageModel, Long> {
 
     @Cacheable(cacheNames = "message")
-    Page<MessageModel> findAllByEventsNameContains(String eventsName, Pageable pageable);
+    Page<MessageModel> findAllByEventsNameContainsIgnoreCase(String eventsName, Pageable pageable);
 
     @Cacheable(cacheNames = "allEvents")
     @Override

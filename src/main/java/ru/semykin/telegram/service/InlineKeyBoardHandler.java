@@ -14,9 +14,7 @@ public class InlineKeyBoardHandler {
 
     public InlineKeyboardMarkup getInlineKyeBoard(int page, int totalPage) {
         final InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-
         final List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         final List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
         final InlineKeyboardButton buttonPrev;
@@ -24,7 +22,7 @@ public class InlineKeyBoardHandler {
         final InlineKeyboardButton buttonNext;
 
         final String prevButtonName = String.format(PREV_PAGE, page);
-        final String currentButtonName = String.format(CURRENT_PAGE, totalPage, page + ONE_PAGE);
+        final String currentButtonName = String.format(CURRENT_PAGE, page + ONE_PAGE, totalPage);
         final String nextButtonName = String.format(NEXT_PAGE, page + TWO_PAGE);
 
         final String prevButtonPage = String.valueOf(page - ONE_PAGE);

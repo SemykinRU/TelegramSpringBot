@@ -80,25 +80,20 @@ public class OutputMessageHandler {
             commandEnum = CommandEnum.CONDITIONS;
         } else {
             final Page<MessageModel> allEventsByNameOnPage
-                    = messageRepository.findAllByEventsNameContains(request, PageRequest.of(FIRST_PAGE, PAGE_SIZE));
-            totalPage = allEventsByNameOnPage.getTotalPages();
-            messageText = getText(allEventsByNameOnPage.getContent());
-            sendMessage.setReplyMarkup(inlineKeyBoardHandler.getInlineKyeBoard(FIRST_PAGE, totalPage));
+                    = messageRepository.findAllByEventsNameContainsIgnoreCase(request, PageRequest.of(FIRST_PAGE, PAGE_SIZE));
+            if (allEventsByNameOnPage.hasContent()) {
+                totalPage = allEventsByNameOnPage.getTotalPages();
+                messageText = getText(allEventsByNameOnPage.getContent());
+                sendMessage.setReplyMarkup(inlineKeyBoardHandler.getInlineKyeBoard(FIRST_PAGE, totalPage));
+            } else {
+                messageText = String.format(UPDATE_NO_HAVE_TEXT, request);
+            }
             commandEnum = CommandEnum.ALLEVENTSBYNAME;
         }
-        setUserStatus(user, commandEnum, request);
+        userHandler.setUserStatus(user, commandEnum, request);
         sendMessage.setText(messageText);
         return sendMessage;
     }
 
-    private void setUserStatus(User user, CommandEnum commandEnum, String request) {
-        final UserEntity userEntity;
-        Optional<UserEntity> optionalUserEntity = userHandler.findByUserId(user.getId());
-        if (optionalUserEntity.isPresent()) {
-            userEntity = optionalUserEntity.get();
-            userEntity.setCommandStatus(commandEnum);
-            userEntity.setLastRequest(request);
-            userHandler.updateUser(userEntity);
-        }
-    }
+
 }

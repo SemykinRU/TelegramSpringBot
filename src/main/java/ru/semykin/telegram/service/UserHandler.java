@@ -40,4 +40,17 @@ public class UserHandler {
         return userRepository.findByUserId(userId);
     }
 
+    public void setUserStatus(User user, CommandEnum commandEnum, String request) {
+        final UserEntity userEntity;
+        Optional<UserEntity> optionalUserEntity = findByUserId(user.getId());
+        if (optionalUserEntity.isPresent()) {
+            userEntity = optionalUserEntity.get();
+            userEntity.setCommandStatus(commandEnum);
+            userEntity.setLastRequest(request);
+            updateUser(userEntity);
+        } else {
+            saveNewUser(user, commandEnum, request);
+        }
+    }
+
 }

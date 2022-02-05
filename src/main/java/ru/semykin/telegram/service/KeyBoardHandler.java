@@ -12,18 +12,15 @@ import java.util.List;
 public class KeyBoardHandler {
 
     public ReplyKeyboardMarkup getMainMenuKeyboard() {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        final ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        final List<KeyboardRow> keyboard = new ArrayList<>();
+        final KeyboardRow keyboardSecondRow = new KeyboardRow();
+        final KeyboardRow keyboardFirstRow = new KeyboardRow();
 
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-
-        List<KeyboardRow> keyboard = new ArrayList<>();
-
-        KeyboardRow keyboardFirstRow = new KeyboardRow();
         keyboardFirstRow.add(CommandEnum.ALLEVENTS.getTitle());
         keyboardFirstRow.add(CommandEnum.PROMOCODE.getTitle());
-
-        KeyboardRow keyboardSecondRow = new KeyboardRow();
         keyboardSecondRow.add(CommandEnum.CONDITIONS.getTitle());
         keyboardSecondRow.add(CommandEnum.HELP.getTitle());
         keyboard.add(keyboardFirstRow);

@@ -22,12 +22,14 @@ public interface Constant {
 
     String NEXT_PAGE = "%s >>>";
 
-    String CURRENT_PAGE = "Всего страниц %s, текущая %s";
+    String CURRENT_PAGE = "%s из %s";
 
     String PREV_PAGE = "<<< %s";
 
     Integer ONE_PAGE = 1;
 
     Integer TWO_PAGE = 2;
+
+    String DEFAULT_STR = "Не определил что вы хотели?";
 
 }
