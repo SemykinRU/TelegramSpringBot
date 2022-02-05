@@ -4,9 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum CommandEnum {
-    HELP("Помощь"),
+    HELP("Что делать?"),
     ALLEVENTS("Все акции"),
-    PROMOCODE("Промокод");
+    PROMOCODE("Промокод"),
+    START("Старт"),
+    CONDITIONS("Условия"),
+    ALLEVENTSBYNAME("Поиск");
 
     private final String title;
 

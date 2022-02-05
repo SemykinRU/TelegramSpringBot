@@ -1,0 +1,27 @@
+bot:
+  name:
+  token:
+  webhookPath:
+
+spring:
+  datasource:
+    url:
+    password:
+    username:
+    driver-class-name:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+
+server:
+  port: 5000
+
+cache:
+  allEvents:
+    ttl: 3600
+    max-size: 1
+  message:
+    ttl: 3600
+    max-size: 500

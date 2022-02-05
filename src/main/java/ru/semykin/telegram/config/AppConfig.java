@@ -4,19 +4,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import ru.semykin.telegram.bot.MyBot;
-import ru.semykin.telegram.service.KeyBoard;
-import ru.semykin.telegram.service.OutputMessage;
+import ru.semykin.telegram.service.EditOutputMessageHandler;
+import ru.semykin.telegram.service.OutputMessageHandler;
 
 @Configuration
 public class AppConfig {
 
     private final BotConfig botConfig;
 
-    private final KeyBoard keyBoard;
+    private final EditOutputMessageHandler editOutputMessageHandler;
 
-    public AppConfig(BotConfig botConfig, KeyBoard keyBoard) {
+    private final OutputMessageHandler outputMessageHandler;
+
+
+    public AppConfig(BotConfig botConfig, EditOutputMessageHandler editOutputMessageHandler, OutputMessageHandler outputMessageHandler) {
         this.botConfig = botConfig;
-        this.keyBoard = keyBoard;
+        this.editOutputMessageHandler = editOutputMessageHandler;
+        this.outputMessageHandler = outputMessageHandler;
     }
 
     @Bean
@@ -25,8 +29,8 @@ public class AppConfig {
     }
 
     @Bean
-    public MyBot springWebhookBot(SetWebhook setWebhook, OutputMessage outputMessage) {
-        MyBot myBot = new MyBot(setWebhook, outputMessage, keyBoard);
+    public MyBot springWebhookBot(SetWebhook setWebhook) {
+        MyBot myBot = new MyBot(setWebhook, outputMessageHandler, editOutputMessageHandler);
         myBot.setBotToken(botConfig.getBotToken());
         myBot.setBotUsername(botConfig.getBotUsername());
         myBot.setBotPath(botConfig.getWebHookPath());

@@ -3,13 +3,12 @@ package ru.semykin.telegram.bot;
 import lombok.Getter;
 import lombok.Setter;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
-import ru.semykin.telegram.service.KeyBoard;
-import ru.semykin.telegram.service.OutputMessage;
+import ru.semykin.telegram.service.EditOutputMessageHandler;
+import ru.semykin.telegram.service.OutputMessageHandler;
 
 @Getter
 @Setter
@@ -19,27 +18,24 @@ public class MyBot extends SpringWebhookBot {
     private String botUsername;
     private String botPath;
 
-    private OutputMessage outputMessage;
+    private OutputMessageHandler outputMessageHandler;
 
-    private final KeyBoard keyBoard;
+    private final EditOutputMessageHandler editOutputMessageHandler;
 
-    public MyBot(SetWebhook setWebhook, OutputMessage outputMessage, KeyBoard keyBoard) {
+    public MyBot(SetWebhook setWebhook, OutputMessageHandler outputMessageHandler, EditOutputMessageHandler editOutputMessageHandler) {
         super(setWebhook);
-        this.outputMessage = outputMessage;
-        this.keyBoard = keyBoard;
+        this.outputMessageHandler = outputMessageHandler;
+        this.editOutputMessageHandler = editOutputMessageHandler;
     }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             Message message = update.getMessage();
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(String.valueOf(message.getChatId()));
-            String answer = outputMessage.giveMessage(update);
-            sendMessage.enableMarkdown(true);
-            sendMessage.setReplyMarkup(keyBoard.getSettingsKeyboard());
-            sendMessage.setText(answer);
-            return sendMessage;
+            return outputMessageHandler.getSendMessage(message);
+        } else if (update.hasCallbackQuery()) {
+            return editOutputMessageHandler.getEditMessage(update.getCallbackQuery());
+
         }
         return null;
     }

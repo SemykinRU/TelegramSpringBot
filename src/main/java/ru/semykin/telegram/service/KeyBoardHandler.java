@@ -9,18 +9,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class KeyBoard {
+public class KeyBoardHandler {
 
-    public ReplyKeyboardMarkup getSettingsKeyboard() {
+    public ReplyKeyboardMarkup getMainMenuKeyboard() {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
+
         List<KeyboardRow> keyboard = new ArrayList<>();
+
         KeyboardRow keyboardFirstRow = new KeyboardRow();
-        for (CommandEnum value : CommandEnum.values()) {
-            keyboardFirstRow.add(value.getTitle());
-        }
+        keyboardFirstRow.add(CommandEnum.ALLEVENTS.getTitle());
+        keyboardFirstRow.add(CommandEnum.PROMOCODE.getTitle());
+
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
+        keyboardSecondRow.add(CommandEnum.CONDITIONS.getTitle());
+        keyboardSecondRow.add(CommandEnum.HELP.getTitle());
         keyboard.add(keyboardFirstRow);
+        keyboard.add(keyboardSecondRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
         return replyKeyboardMarkup;
     }
