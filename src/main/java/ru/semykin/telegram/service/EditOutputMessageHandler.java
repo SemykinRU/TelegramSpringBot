@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.User;
-import ru.semykin.telegram.entity.MessageModel;
+import ru.semykin.telegram.entity.EventEntity;
 import ru.semykin.telegram.entity.UserEntity;
 import ru.semykin.telegram.repository.MessageRepository;
 import ru.semykin.telegram.util.CommandEnum;
@@ -20,7 +20,7 @@ import static ru.semykin.telegram.util.Constant.*;
 @Service
 public class EditOutputMessageHandler {
 
-    private final UserHandler userHandler;
+    private final UserService userService;
 
     private final MessageRepository messageRepository;
 
@@ -28,8 +28,8 @@ public class EditOutputMessageHandler {
 
     private final InlineKeyBoardHandler inlineKeyBoardHandler;
 
-    public EditOutputMessageHandler(UserHandler userHandler, MessageRepository messageRepository, OutputMessageHandler outputMessageHandler, InlineKeyBoardHandler inlineKeyBoardHandler) {
-        this.userHandler = userHandler;
+    public EditOutputMessageHandler(UserService userService, MessageRepository messageRepository, OutputMessageHandler outputMessageHandler, InlineKeyBoardHandler inlineKeyBoardHandler) {
+        this.userService = userService;
         this.messageRepository = messageRepository;
         this.outputMessageHandler = outputMessageHandler;
         this.inlineKeyBoardHandler = inlineKeyBoardHandler;
@@ -43,17 +43,17 @@ public class EditOutputMessageHandler {
         final int page = Integer.parseInt(callbackQuery.getData());
         final int totalPage;
         final EditMessageText editMessageText = new EditMessageText();
-        final Optional<UserEntity> entity = userHandler.findByUserId(user.getId());
+        final Optional<UserEntity> entity = userService.findByUserId(user.getId());
         String textMessage = DEFAULT_STR;
 
         if (entity.isPresent()) {
             if (entity.get().getCommandStatus().equals(CommandEnum.ALLEVENTS)) {
-                final Page<MessageModel> all = messageRepository.findAll(PageRequest.of(page, PAGE_SIZE));
+                final Page<EventEntity> all = messageRepository.findAll(PageRequest.of(page, PAGE_SIZE));
                 textMessage = outputMessageHandler.getText(all.getContent());
                 totalPage = all.getTotalPages();
                 editMessageText.setReplyMarkup(inlineKeyBoardHandler.getInlineKyeBoard(page, totalPage));
             } else if (entity.get().getCommandStatus().equals(CommandEnum.ALLEVENTSBYNAME)) {
-                final Page<MessageModel> all = messageRepository.findAllByEventsNameContainsIgnoreCase(entity.get().getLastRequest(), PageRequest.of(page, PAGE_SIZE));
+                final Page<EventEntity> all = messageRepository.findAllByEventsNameContainsIgnoreCase(entity.get().getLastRequest(), PageRequest.of(page, PAGE_SIZE));
                 if (all.hasContent()) {
                     textMessage = outputMessageHandler.getText(all.getContent());
                     totalPage = all.getTotalPages();

@@ -9,27 +9,19 @@ import ru.semykin.telegram.util.CommandEnum;
 import java.util.Optional;
 
 @Service
-public class UserHandler {
+public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserHandler(UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public UserEntity saveNewUser(User user, CommandEnum commandEnum, String lastRequest) {
-        UserEntity userEntity =
-                UserEntity
-                        .builder()
-                        .userId(user.getId())
-                        .isBot(user.getIsBot())
-                        .userName(user.getUserName())
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .commandStatus(commandEnum)
-                        .lastRequest(lastRequest)
-                        .build();
-        return userRepository.save(userEntity);
+    public void saveNewUser(User user, CommandEnum commandEnum, String lastRequest) {
+        UserEntity userEntity = setUserEntityFromTelegramUser(user);
+        userEntity.setCommandStatus(commandEnum);
+        userEntity.setLastRequest(lastRequest);
+        userRepository.save(userEntity);
     }
 
     public void updateUser(UserEntity user) {
@@ -37,7 +29,7 @@ public class UserHandler {
     }
 
     public Optional<UserEntity> findByUserId(Long userId) {
-        return userRepository.findByUserId(userId);
+        return userRepository.findByTelegramId(userId);
     }
 
     public void setUserStatus(User user, CommandEnum commandEnum, String request) {
@@ -53,4 +45,13 @@ public class UserHandler {
         }
     }
 
+    private UserEntity setUserEntityFromTelegramUser(User user) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setTelegramId(user.getId());
+        userEntity.setIsBot(user.getIsBot());
+        userEntity.setUserName(user.getUserName());
+        userEntity.setFirstName(user.getFirstName());
+        userEntity.setFirstName(user.getLastName());
+        return userEntity;
+    }
 }

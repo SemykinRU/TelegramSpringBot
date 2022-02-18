@@ -1,38 +1,33 @@
 package ru.semykin.telegram.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.User;
-import ru.semykin.telegram.entity.MessageModel;
-import ru.semykin.telegram.entity.UserEntity;
+import ru.semykin.telegram.entity.EventEntity;
 import ru.semykin.telegram.repository.MessageRepository;
 import ru.semykin.telegram.util.CommandEnum;
 
 import java.util.List;
-import java.util.Optional;
 
 import static ru.semykin.telegram.util.Constant.*;
 
 @Service
+@AllArgsConstructor
 public class OutputMessageHandler {
 
     private final MessageRepository messageRepository;
 
-    private final UserHandler userHandler;
+    private final UserService userService;
 
     private final KeyBoardHandler keyBoardHandler;
 
     private final InlineKeyBoardHandler inlineKeyBoardHandler;
 
-    public OutputMessageHandler(MessageRepository messageRepository, UserHandler userHandler, KeyBoardHandler keyBoardHandler, InlineKeyBoardHandler inlineKeyBoardHandler) {
-        this.messageRepository = messageRepository;
-        this.userHandler = userHandler;
-        this.keyBoardHandler = keyBoardHandler;
-        this.inlineKeyBoardHandler = inlineKeyBoardHandler;
-    }
+    private final SupMessageService supMessageService;
 
     public SendMessage getSendMessage(Message message) {
         final User user = message.getFrom();
@@ -43,9 +38,9 @@ public class OutputMessageHandler {
         return sendMessage;
     }
 
-    public String getText(List<MessageModel> messageModelList) {
+    public String getText(List<EventEntity> eventEntityList) {
         StringBuilder stringBuilder = new StringBuilder();
-        messageModelList.forEach(stringBuilder::append);
+        eventEntityList.forEach(stringBuilder::append);
         return stringBuilder.toString();
     }
 
@@ -55,31 +50,31 @@ public class OutputMessageHandler {
         final CommandEnum commandEnum;
         final int totalPage;
 
-        if (request.equals(CommandEnum.ALLEVENTS.getTitle())) {
-            final Page<MessageModel> allEventsOnPage =
+        if (request.equals(CommandEnum.ALLEVENTS.getTitle()) || request.equals(ALL_EVENTS_COMMAND)) {
+            final Page<EventEntity> allEventsOnPage =
                     messageRepository.findAll(PageRequest.of(FIRST_PAGE, PAGE_SIZE));
             totalPage = allEventsOnPage.getTotalPages();
             messageText = getText(allEventsOnPage.getContent());
             sendMessage.setReplyMarkup(inlineKeyBoardHandler.getInlineKyeBoard(FIRST_PAGE, totalPage));
             commandEnum = CommandEnum.ALLEVENTS;
-        } else if (request.equals(CommandEnum.PROMOCODE.getTitle())) {
+        } else if (request.equals(CommandEnum.PROMOCODE.getTitle()) || request.equals(PROMO_CODE_COMMAND)) {
             messageText = PROMO_CODE;
             sendMessage.setReplyMarkup(keyBoardHandler.getMainMenuKeyboard());
             commandEnum = CommandEnum.PROMOCODE;
-        } else if (request.equals(CommandEnum.HELP.getTitle())) {
-            messageText = HELP;
+        } else if (request.equals(CommandEnum.HELP.getTitle()) || request.equals(HELP_COMMAND)) {
+            messageText = supMessageService.getHelpSupMessage();
             sendMessage.setReplyMarkup(keyBoardHandler.getMainMenuKeyboard());
             commandEnum = CommandEnum.HELP;
-        } else if (request.equals(CommandEnum.START.getTitle())) {
-            messageText = START;
+        } else if (request.equals(CommandEnum.START.getTitle()) || request.equals(START_COMMAND)) {
+            messageText = supMessageService.getStartSupMessage();
             sendMessage.setReplyMarkup(keyBoardHandler.getMainMenuKeyboard());
             commandEnum = CommandEnum.START;
-        } else if (request.equals(CommandEnum.CONDITIONS.getTitle())) {
-            messageText = CONDITIONS;
+        } else if (request.equals(CommandEnum.CONDITIONS.getTitle()) || request.equals(CONDITIONS_COMMAND)) {
+            messageText = supMessageService.getConditionsMessage();
             sendMessage.setReplyMarkup(keyBoardHandler.getMainMenuKeyboard());
             commandEnum = CommandEnum.CONDITIONS;
         } else {
-            final Page<MessageModel> allEventsByNameOnPage
+            final Page<EventEntity> allEventsByNameOnPage
                     = messageRepository.findAllByEventsNameContainsIgnoreCase(request, PageRequest.of(FIRST_PAGE, PAGE_SIZE));
             if (allEventsByNameOnPage.hasContent()) {
                 totalPage = allEventsByNameOnPage.getTotalPages();
@@ -90,7 +85,7 @@ public class OutputMessageHandler {
             }
             commandEnum = CommandEnum.ALLEVENTSBYNAME;
         }
-        userHandler.setUserStatus(user, commandEnum, request);
+        userService.setUserStatus(user, commandEnum, request);
         sendMessage.setText(messageText);
         return sendMessage;
     }

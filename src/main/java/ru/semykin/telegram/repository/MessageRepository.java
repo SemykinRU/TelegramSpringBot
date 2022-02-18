@@ -4,15 +4,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.semykin.telegram.entity.MessageModel;
+import ru.semykin.telegram.entity.EventEntity;
 
-public interface MessageRepository extends JpaRepository<MessageModel, Long> {
+public interface MessageRepository extends JpaRepository<EventEntity, Long> {
 
     @Cacheable(cacheNames = "message")
-    Page<MessageModel> findAllByEventsNameContainsIgnoreCase(String eventsName, Pageable pageable);
+    Page<EventEntity> findAllByEventsNameContainsIgnoreCase(String eventsName, Pageable pageable);
 
     @Cacheable(cacheNames = "allEvents")
     @Override
-    Page<MessageModel> findAll(Pageable pageable);
+    Page<EventEntity> findAll(Pageable pageable);
 
 }
